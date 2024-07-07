@@ -1,4 +1,4 @@
-﻿namespace ChatApp.Data
+﻿namespace ChatApp.DataAccess.Data
 {
     public class Message
     {
