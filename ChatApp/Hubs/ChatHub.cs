@@ -1,6 +1,9 @@
-﻿namespace ChatApp.Hubs
+﻿using Microsoft.AspNetCore.SignalR;
+
+namespace ChatApp.Hubs
 {
-    public class ChatHub
+    public class ChatHub : Hub
     {
+        public async Task JoinChat()
     }
 }
