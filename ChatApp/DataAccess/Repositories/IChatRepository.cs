@@ -9,6 +9,7 @@ namespace ChatApp.DataAccess.Repositories
         Task<Chat> GetChatByIdAsync(int id);
         Task AddChatAsync(Chat chat);
         Task AddUserToChatAsync(int chatId, User user);
+        Task AddMessageAsync(Message message);
         Task DeleteChatAsync(Chat chat);
         Task SaveChangesAsync(); 
     }

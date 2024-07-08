@@ -48,5 +48,16 @@ namespace ChatApp.DataAccess.Repositories
                 await SaveChangesAsync();
             }
         }
+
+        public async Task AddMessageAsync(Message message)
+        {
+            var chat = await _context.Chats.FindAsync(message.ChatId);
+            if (chat != null)
+            {
+                message.Timestamp = DateTime.UtcNow;
+                chat.Messages.Add(message);
+                await SaveChangesAsync();
+            }
+        }
     }
 }
