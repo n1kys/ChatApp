@@ -52,6 +52,7 @@ namespace ChatApp.BusinessLogic.Services
         public async Task AddMessageAsync(Message message)
         {
             var chat = await _chatRepository.GetChatByIdAsync(message.ChatId);
+            message.Timestamp = DateTime.UtcNow;
             chat.Messages.Add(message);
             await _chatRepository.SaveChangesAsync();
         }
@@ -59,15 +60,17 @@ namespace ChatApp.BusinessLogic.Services
         public async Task AddUserToChatAsync(int chatId, int userId)
         {
             var chat = await _chatRepository.GetChatByIdAsync(chatId);
+            var user = await _userRepository.GetUserByIdAsync(userId);
 
-            if (chat == null)
+            if (chat != null && user != null)
             {
-                throw new ArgumentException($"Chat with ID {chatId} not found.");
+                chat.Users.Add(user);
+                await _chatRepository.SaveChangesAsync();
             }
-
-            chat.Users.Add(new User { Id = userId }); 
-
-            await _chatRepository.SaveChangesAsync();
+            else
+            {
+                throw new Exception("Chat or User not found");
+            }
         }
 
     }

@@ -13,6 +13,12 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR();
 
+builder.Services.AddControllers()
+           .AddJsonOptions(options =>
+           {
+               options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+           });
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -79,8 +85,29 @@ app.MapPost("/api/users", async (User user, IUserService userService) =>
 
 app.MapPost("/api/chats/{chatId}/users/{userId}", async (int chatId, int userId, IChatService chatService) =>
 {
-    await chatService.AddUserToChatAsync(chatId, userId);
-    return Results.Created($"/api/chats/{chatId}/users/{userId}", new { ChatId = chatId, UserId = userId });
+    try
+    {
+        await chatService.AddUserToChatAsync(chatId, userId);
+        return Results.Ok();
+    }
+    catch (Exception ex)
+    {
+        return Results.BadRequest(ex.Message);
+    }
+});
+
+app.MapPost("/api/chats/{chatId}/messages", async (int chatId, Message message, IChatService chatService) =>
+{
+    try
+    {
+        message.ChatId = chatId;
+        await chatService.AddMessageAsync(message);
+        return Results.Created($"/api/chats/{chatId}/messages/{message.Id}", message);
+    }
+    catch (Exception ex)
+    {
+        return Results.BadRequest(ex.Message);
+    }
 });
 
 app.MapGet("/api/users/{id}", async (int id, IUserService userService) =>
